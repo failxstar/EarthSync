@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local PostgreSQL Data Directory
+pgdata/
+**/pgdata/
+*.sqlite
+*.db
+
+# Production Builds
+dist/
+**/dist/
+build/
+**/build/
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary test files
+**/test-*.js
+test-*.js
+scratch/
+.tempmediaStorage/
