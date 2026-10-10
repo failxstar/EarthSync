@@ -1,0 +1,270 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CITIZEN
+  DONOR
+  RECIPIENT
+  PROVIDER
+  ADMIN
+}
+
+enum ResourceCategory {
+  FOOD
+  CLOTHING
+  ELECTRONICS
+  FURNITURE
+  RECYCLABLES
+  WATER
+  OTHER
+}
+
+enum ResourceStatus {
+  AVAILABLE
+  RESERVED
+  COMPLETED
+  EXPIRED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum ReportCategory {
+  WASTE
+  WATER_LEAKAGE
+  POLLUTION
+  ILLEGAL_DUMPING
+  ENERGY
+  OTHER
+}
+
+enum ReportPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ReportStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum AssignmentStatus {
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  SYSTEM
+  RESOURCE_UPDATE
+  REPORT_UPDATE
+  MATCH_ALERT
+}
+
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  passwordHash   String
+  phone          String?
+  role           Role      @default(CITIZEN)
+  accountStatus  String    @default("ACTIVE")
+  profileImage   String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  resources      Resource[]
+  requests       ResourceRequest[]
+  reports        EnvironmentalReport[]
+  assignments    ReportAssignment[]    @relation("ProviderAssignments")
+  assignedBy     ReportAssignment[]    @relation("AssignedBy")
+  notifications  Notification[]
+  recommendations MatchRecommendation[] @relation("RecipientRecommendations")
+  impactRecords  ImpactRecord[]
+  auditLogs      AuditLog[]            @relation("ActorLogs")
+}
+
+model Resource {
+  id             String           @id @default(uuid())
+  ownerId        String
+  title          String
+  description    String
+  category       ResourceCategory
+  quantity       Float
+  unit           String
+  condition      String?
+  location       String
+  latitude       Float?
+  longitude      Float?
+  imageUrls      String[]
+  status         ResourceStatus   @default(AVAILABLE)
+  expiryDate     DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  owner          User             @relation(fields: [ownerId], references: [id])
+  requests       ResourceRequest[]
+  recommendations MatchRecommendation[]
+  impactRecords  ImpactRecord[]
+
+  @@index([status])
+  @@index([category])
+  @@index([latitude, longitude])
+  @@index([ownerId])
+}
+
+model ResourceRequest {
+  id                String        @id @default(uuid())
+  resourceId        String
+  requesterId       String
+  quantityRequested Float
+  message           String?
+  status            RequestStatus @default(PENDING)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  resource          Resource      @relation(fields: [resourceId], references: [id])
+  requester         User          @relation(fields: [requesterId], references: [id])
+
+  @@unique([resourceId, requesterId]) // Prevent duplicate requests
+  @@index([status])
+  @@index([requesterId])
+}
+
+model EnvironmentalReport {
+  id                   String           @id @default(uuid())
+  reporterId           String
+  title                String
+  description          String
+  category             ReportCategory
+  priority             ReportPriority   @default(MEDIUM)
+  status               ReportStatus     @default(SUBMITTED)
+  location             String
+  latitude             Float?
+  longitude            Float?
+  imageUrls            String[]
+  aiClassificationResult String?        
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  reporter             User             @relation(fields: [reporterId], references: [id])
+  assignments          ReportAssignment[]
+  impactRecords        ImpactRecord[]
+
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([latitude, longitude])
+  @@index([reporterId])
+}
+
+model ReportAssignment {
+  id              String           @id @default(uuid())
+  reportId        String
+  providerId      String
+  assignedById    String?
+  status          AssignmentStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  report          EnvironmentalReport @relation(fields: [reportId], references: [id])
+  provider        User                @relation("ProviderAssignments", fields: [providerId], references: [id])
+  assignedBy      User?               @relation("AssignedBy", fields: [assignedById], references: [id])
+
+  @@index([status])
+  @@index([providerId])
+  @@index([reportId])
+}
+
+model Notification {
+  id              String           @id @default(uuid())
+  userId          String
+  title           String
+  message         String
+  type            NotificationType @default(SYSTEM)
+  isRead          Boolean          @default(false)
+  referenceId     String?          
+  referenceType   String?          
+  createdAt       DateTime         @default(now())
+
+  user            User             @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model MatchRecommendation {
+  id              String   @id @default(uuid())
+  resourceId      String
+  recipientId     String
+  matchScore      Float
+  explanation     String?
+  status          String   @default("PENDING") 
+  createdAt       DateTime @default(now())
+
+  resource        Resource @relation(fields: [resourceId], references: [id])
+  recipient       User     @relation("RecipientRecommendations", fields: [recipientId], references: [id])
+
+  @@index([recipientId])
+  @@index([resourceId])
+}
+
+model ImpactRecord {
+  id                  String   @id @default(uuid())
+  userId              String
+  resourceId          String?
+  reportId            String?
+  impactType          String   
+  quantity            Float
+  unit                String
+  calculationMethod   String?
+  originalMeasurement Float?
+  originalUnit        String?
+  conversionFactor    Float?
+  isEstimated         Boolean  @default(false)
+  factorSource        String?
+  verificationStatus  String   @default("UNVERIFIED") 
+  createdAt           DateTime @default(now())
+
+  user                User                 @relation(fields: [userId], references: [id])
+  resource            Resource?            @relation(fields: [resourceId], references: [id])
+  report              EnvironmentalReport? @relation(fields: [reportId], references: [id])
+
+  @@index([userId])
+  @@index([impactType])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     String?
+  action      String
+  entityType  String
+  entityId    String
+  metadata    String?  
+  createdAt   DateTime @default(now())
+
+  actor       User?    @relation("ActorLogs", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+}
