@@ -1,0 +1,35 @@
+# AWS Elastic Beanstalk Ignore File
+# Excludes local environments, credentials, test files, and local dependencies
+
+# Dependencies (Installed remotely by Elastic Beanstalk)
+node_modules/
+
+# Secrets and Environment Variables (Configured in AWS Console / EB Environment Properties)
+.env
+.env.*
+*.env
+!.env.example
+
+# Local Database Files
+pgdata/
+*.sqlite
+*.db
+
+# Test Scripts and Local Scratch Files
+run-e2e.js
+test-*.js
+AI_AND_IMPACT_DOCS.md
+scratch/
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE and OS
+.git/
+.gitignore
+.vscode/
+.idea/
+.DS_Store
+*.zip
+Thumbs.db

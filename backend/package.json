@@ -1,12 +1,24 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "EarthSync REST API backend",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:status": "prisma migrate status",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "earthsync",
+    "express",
+    "postgresql",
+    "prisma",
+    "aws-elastic-beanstalk"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

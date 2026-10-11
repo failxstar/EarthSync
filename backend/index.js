@@ -1,2 +1,4 @@
 require('dotenv').config();
-require('./src/server');
+const { startServer } = require('./src/server');
+
+startServer();

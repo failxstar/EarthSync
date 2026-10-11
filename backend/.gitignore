@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Secrets and Local Configurations
+.env
+.env.*
+*.env
+!.env.example
+
+# Local Database Files
+pgdata/
+*.sqlite
+*.db
+
+# Test Scripts
+run-e2e.js
+test-*.js
+scratch/
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+*.zip
+Thumbs.db
