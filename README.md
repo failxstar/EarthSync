@@ -1,5 +1,6 @@
 # 🌍 EarthSync — AI-Assisted Environmental Resource Management Platform
 
+[![Live Demo](https://img.shields.io/badge/Live%20App-AWS%20Amplify-FF9900.svg?logo=awsamplify&logoColor=white)](https://main.d2wx8nlqy99bxh.amplifyapp.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
 [![Express](https://img.shields.io/badge/Express-4.21-green.svg)](https://expressjs.com/)
@@ -7,6 +8,9 @@
 [![Prisma](https://img.shields.io/badge/Prisma-6.5-2d3748.svg)](https://www.prisma.io/)
 [![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini%20Vision-8e44ad.svg)](https://ai.google.dev/)
 [![Cloudinary](https://img.shields.io/badge/Media-Cloudinary%20CDN-3448c5.svg)](https://cloudinary.com/)
+
+> 🌐 **Live Application**: [https://main.d2wx8nlqy99bxh.amplifyapp.com](https://main.d2wx8nlqy99bxh.amplifyapp.com/)
+
 
 **EarthSync** is an enterprise-grade, full-stack, AI-driven environmental resource recovery and hazard management platform. It connects citizens, municipal authorities, community donors, non-profits, and service providers into a unified circular-economy and incident-response network.
 
