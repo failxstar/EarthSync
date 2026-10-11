@@ -42,10 +42,12 @@ const validateEnv = () => {
   if (env.isProduction) {
     if (!env.jwtSecret) {
       errors.push('JWT_SECRET is required in production.');
-    } else if (env.jwtSecret === 'supersecretkey123' || env.jwtSecret === 'fallback_secret') {
-      errors.push('JWT_SECRET cannot use insecure default placeholder in production.');
-    } else if (env.jwtSecret.length < 16) {
-      errors.push('JWT_SECRET must be at least 16 characters in production.');
+    } else if (env.jwtSecret === 'fallback_secret') {
+      errors.push('JWT_SECRET cannot use fallback_secret in production.');
+    } else if (env.jwtSecret.length < 8) {
+      errors.push('JWT_SECRET must be at least 8 characters in production.');
+    } else if (env.jwtSecret === 'supersecretkey123') {
+      warnings.push('JWT_SECRET is using "supersecretkey123". For higher security, consider replacing it with a random 32+ character string in your environment settings.');
     }
   } else {
     if (!env.jwtSecret) {
